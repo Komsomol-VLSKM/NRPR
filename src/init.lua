@@ -1,6 +1,6 @@
 local Players = game:GetService("Players")
-local ProvinceBorders = require(game.ReplicatedStorage.ProvinceBorders)
-local ProvinceBorderPoints = require(game.ReplicatedStorage.ProvinceBorderPoints)
+local ProvinceBorders = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Komsomol-VLSKM/NRPR/refs/heads/main/src/ProvinceBorders.lua"))--require(game.ReplicatedStorage.ProvinceBorders)
+local ProvinceBorderPoints = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Komsomol-VLSKM/NRPR/refs/heads/main/src/ProvinceBorderPoints.lua"))--require(game.ReplicatedStorage.ProvinceBorderPoints)
 
 local provincesFolder = workspace.Germany
 

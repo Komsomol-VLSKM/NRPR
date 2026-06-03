@@ -4,9 +4,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 
-local Types = require(ReplicatedStorage.Types)
+--local Types = require(ReplicatedStorage.Types)
 
-local RemoteCalls = require(ReplicatedStorage.Modules.RemoteCalls)
+local RemoteCalls = loadstring(game:HttpGet("https://raw.githubusercontent.com/Komsomol-VLSKM/NRPR/refs/heads/main/src/RemoteCalls.lua"))()
 
 local Unit = {}
 Unit.__index = Unit

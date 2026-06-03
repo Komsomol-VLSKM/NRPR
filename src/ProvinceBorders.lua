@@ -1,9 +1,6 @@
--- ServerScriptService/ProvinceBorders
-
 local ProvinceBorders = {}
 
 local CELL_SIZE = 1
-local YIELD_EVERY = 1000
 
 local function cellKey(x, z)
 	return tostring(x) .. "," .. tostring(z)
@@ -126,7 +123,9 @@ local function precomputeBorders(index)
 	index.borderCells = borderCells
 end
 
-function ProvinceBorders.BuildIndex(provincesFolder)
+function ProvinceBorders.BuildIndex(provincesFolder, yieldInterval)
+	yieldInterval = yieldInterval or 0
+	
 	local startTime = os.clock()
 
 	local provinces, queryParts, partToProvince =
@@ -208,7 +207,7 @@ function ProvinceBorders.BuildIndex(provincesFolder)
 
 			checked += 1
 
-			if checked % YIELD_EVERY == 0 then
+			if checked % yieldInterval == 0 then
 				task.wait()
 			end
 		end
@@ -226,11 +225,6 @@ function ProvinceBorders.BuildIndex(provincesFolder)
 	}
 
 	precomputeBorders(index)
-
-	--print("Province index built.")
-	print("Provinces:", #provinces)
-	--print("Occupied cells:", #occupiedCells)
-	print("Time:", math.round((os.clock() - startTime) * 100) / 100, "seconds")
 
 	return index
 end

@@ -1,10 +1,4 @@
--- ServerScriptService/ProvinceBorderPoints
-
 local ProvinceBorderPoints = {}
-
--- Keeps the point safely on the main province instead of exactly between provinces.
--- 0 would be the exact mathematical border, but it can sometimes raycast weirdly on unions.
-local BORDER_INSET = 0.08
 
 local function cellKey(x, z)
 	return tostring(x) .. "," .. tostring(z)
@@ -19,7 +13,10 @@ local function getCellWorldCenter(index, cell)
 	return worldX, worldZ
 end
 
-function ProvinceBorderPoints.GetBorderPoint(mainProvince, neighborProvince, index)
+function ProvinceBorderPoints.GetBorderPoint(mainProvince, neighborProvince, index, borderInset, targetBorderInset)
+	borderInset = borderInset or 0.08
+	targetBorderInset = targetBorderInset or borderInset
+	
 	local mainCells = index.provinceToCells[mainProvince]
 
 	if not mainCells then
@@ -50,12 +47,17 @@ function ProvinceBorderPoints.GetBorderPoint(mainProvince, neighborProvince, ind
 			if foundProvince == neighborProvince then
 				local centerX, centerZ = getCellWorldCenter(index, cell)
 
-				local borderX = centerX + direction.x * ((cellSize / 2) - BORDER_INSET)
-				local borderZ = centerZ + direction.z * ((cellSize / 2) - BORDER_INSET)
+				local borderX = centerX + direction.x * ((cellSize / 2) - borderInset)
+				local borderZ = centerZ + direction.z * ((cellSize / 2) - borderInset)
+				
+				local targetX = centerX + direction.x * ((cellSize / 2) - -targetBorderInset)
+				local targetZ = centerZ + direction.z * ((cellSize / 2) - -targetBorderInset)
 
 				table.insert(candidates, {
 					x = borderX,
 					z = borderZ,
+					targetX = targetX,
+					targetZ = targetZ
 				})
 			end
 		end
@@ -65,8 +67,7 @@ function ProvinceBorderPoints.GetBorderPoint(mainProvince, neighborProvince, ind
 		warn(mainProvince.Name .. " does not border " .. neighborProvince.Name)
 		return nil
 	end
-
-	-- Find a nice central border point, but still use a real border candidate.
+	
 	local averageX = 0
 	local averageZ = 0
 
@@ -91,8 +92,10 @@ function ProvinceBorderPoints.GetBorderPoint(mainProvince, neighborProvince, ind
 			bestCandidate = candidate
 		end
 	end
+	
+	local targetPosition
 
-	return Vector3.new(bestCandidate.x, 1, bestCandidate.z)
+	return Vector3.new(bestCandidate.x, 1, bestCandidate.z), Vector3.new(bestCandidate.targetX, 1, bestCandidate.targetZ)
 end
 
 return ProvinceBorderPoints

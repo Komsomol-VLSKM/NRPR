@@ -29,6 +29,11 @@ function CountryService.init(self: CountryService)
 	countriesFolder.ChildRemoved:Connect(function(countryFolder)
 		self.countries[self:getCountryFromCountryFolder(countryFolder).id] = nil
 	end)
+	
+	for _, countryFolder: Folder in countriesFolder:GetChildren() do
+		local country = Country.new(countryFolder)
+		self.countries[country.id] = country
+	end
 end
 
 function CountryService.getCountryFromCountryFolder(self: CountryService, countryFolder: Folder): Country

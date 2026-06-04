@@ -7,8 +7,8 @@ local Players = game:GetService("Players")
 
 -- local Types = require(ReplicatedStorage.Types)
 
-local RemoteCalls = loadstring(game:HttpGet("https://raw.githubusercontent.com/Komsomol-VLSKM/NRPR/refs/heads/main/src/RemoteCalls.lua")()
-local CountryService = loadstring(game:HttpGet("https://raw.githubusercontent.com/Komsomol-VLSKM/NRPR/refs/heads/main/src/services/CountryService.lua")()
+local RemoteCalls = loadstring(game:HttpGet("https://raw.githubusercontent.com/Komsomol-VLSKM/NRPR/refs/heads/main/src/RemoteCalls.lua"))()
+local CountryService = loadstring(game:HttpGet("https://raw.githubusercontent.com/Komsomol-VLSKM/NRPR/refs/heads/main/src/services/CountryService.lua"))()
 
 local player = Players.LocalPlayer
 

@@ -5,10 +5,10 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 
--- local Types = require(ReplicatedStorage.Types)
+local Types = require(ReplicatedStorage.Types)
 
-local RemoteCalls = loadstring(game:HttpGet("https://raw.githubusercontent.com/Komsomol-VLSKM/NRPR/refs/heads/main/src/RemoteCalls.lua"))()
-local CountryService = loadstring(game:HttpGet("https://raw.githubusercontent.com/Komsomol-VLSKM/NRPR/refs/heads/main/src/services/CountryService.lua"))()
+local RemoteCalls = require(ReplicatedStorage.Modules.RemoteCalls)
+local CountryService = require(ReplicatedStorage.Services.CountryService)
 
 local player = Players.LocalPlayer
 
@@ -25,6 +25,10 @@ function Unit.new(unitType, position, province): Types.Unit
 	
 	if not RunService:IsStudio() then
 		local country = CountryService:getCountryFromPlayer(player)
+		if not country then
+			warn("Failed to retrieve player country!")
+			return
+		end
 		
 		local connection
 		connection = country.unitsFolder.ChildAdded:Connect(function(model: Model)

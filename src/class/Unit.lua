@@ -3,10 +3,14 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
 
---local Types = require(ReplicatedStorage.Types)
+-- local Types = require(ReplicatedStorage.Types)
 
-local RemoteCalls = loadstring(game:HttpGet("https://raw.githubusercontent.com/Komsomol-VLSKM/NRPR/refs/heads/main/src/RemoteCalls.lua"))()
+local RemoteCalls = loadstring(game:HttpGet("https://raw.githubusercontent.com/Komsomol-VLSKM/NRPR/refs/heads/main/src/RemoteCalls.lua")
+local CountryService = loadstring(game:HttpGet("https://raw.githubusercontent.com/Komsomol-VLSKM/NRPR/refs/heads/main/src/services/CountryService.lua")
+
+local player = Players.LocalPlayer
 
 local Unit = {}
 Unit.__index = Unit
@@ -20,6 +24,34 @@ function Unit.new(unitType, position, province): Types.Unit
 	}, Unit)
 	
 	if not RunService:IsStudio() then
+		local country = CountryService:getCountryFromPlayer(player)
+		
+		local connection
+		connection = country.unitsFolder.ChildAdded:Connect(function(model: Model)
+			if model.SpawnedBy.Value ~= player.UserId then
+				return
+			end
+			
+			local modelPosition = model:GetPivot().Position
+			local roundedModelPosition = Vector3.new(
+				math.round(modelPosition.X),
+				math.round(modelPosition.Y),
+				math.round(modelPosition.Z)
+			)
+			local roundedPosition = Vector3.new(
+				math.round(position.X),
+				math.round(position.Y),
+				math.round(position.Z)
+			)
+			
+			if roundedModelPosition ~= roundedPosition then
+				return
+			end
+			
+			self.model = model
+			connection:Disconnect()
+		end)
+		
 		RemoteCalls.spawnTroop(province, position, unitType)
 	else
 		local part = Instance.new("Part")
@@ -34,6 +66,16 @@ function Unit.new(unitType, position, province): Types.Unit
 		part.Material = Enum.Material.Neon
 		part.Position = position
 		part.Parent = workspace
+	end
+	
+	local t = tick()
+	
+	while self.model == nil do
+		RunService.Heartbeat:Wait()
+		if tick() - t > 5 then
+			warn("Unit.new: Timed out waiting for model")
+			break
+		end
 	end
 	
 	return self

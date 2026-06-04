@@ -7,7 +7,7 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local mouse = player:GetMouse()
 
-local Country = loadstring(game:HttpGet("https://raw.githubusercontent.com/Komsomol-VLSKM/NRPR/refs/heads/main/src/class/Country.lua"))()
+local Country = require(ReplicatedStorage.Class.Country)
 
 local CountryService = {
 	countries = {}
@@ -38,6 +38,7 @@ end
 
 function CountryService.getCountryFromCountryFolder(self: CountryService, countryFolder: Folder): Country
 	for id, country in self.countries do
+		print(id, country)
 		if countryFolder == country.folder then
 			return country
 		end
